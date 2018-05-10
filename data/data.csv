@@ -1,4 +1,4 @@
-Id2,abbr,Geography,poverty,healthcare
+﻿Id2,abbr,Geography,poverty,healthcare
 1,AL,Alabama,19.3,13.9
 2,AK,Alaska,11.2,15
 4,AZ,Arizona,18.2,14.4
@@ -50,4 +50,3 @@ Id2,abbr,Geography,poverty,healthcare
 54,WV,West Virginia,18.3,10.1
 55,WI,Wisconsin,13.2,8.5
 56,WY,Wyoming,11.2,15.1
-72,PR,Puerto Rico,46.2,6

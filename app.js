@@ -16,6 +16,7 @@ var svg = d3.select(".chart")
   .append("svg")
   .attr("width", svgWidth)
   .attr("height", svgHeight)
+  .append("g");
 
 var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
@@ -29,16 +30,19 @@ d3.csv("data/data.csv", function (err, cData) {
   cData.forEach(function (data) {
     data.poverty = +data.poverty;
     data.healthcare = +data.healthcare;
+    data.abbr = data.abbr;
   });
 
   // Step 2: Create scale functions
   // ==============================
   var xLinearScale = d3.scaleLinear()
-    .domain([7, d3.max(cData, d => d.poverty)])
+    .domain([4, d3.max(cData, function(data){ 
+      return +data.healthcare})])
     .range([0, width]);
 
   var yLinearScale = d3.scaleLinear()
-    .domain([4, d3.max(cData, d => d.healthcare)])
+    .domain([8, d3.max(cData, function(data){ 
+      return +data.poverty})])
     .range([height, 0]);
 
   // Step 3: Create axis functions
@@ -61,31 +65,35 @@ d3.csv("data/data.csv", function (err, cData) {
   .data(cData)
   .enter()
   .append("circle")
-  .attr("cx", d => xLinearScale(d.poverty))
-  .attr("cy", d => yLinearScale(d.healthcare))
+  .attr("cx", function(data, index){
+    return xLinearScale(data.healthcare)})
+  .attr("cy", function(data, index){ 
+    return yLinearScale(data.poverty)})
   .attr("r", "10")
   .attr("fill", "purple")
-  .attr("opacity", ".5")
+  .attr("opacity", ".5");
 
-  var textGroup = chartGroup.selectAll("text")
+  var textGroup = chartGroup.selectAll("g")
   .data(cData)
   .enter()
   .append("text")
-  .attr("x", d => xLinearScale(d.poverty))
-  .attr("y", d => yLinearScale(d.healthcare))
+  .attr("x", function(data, index){
+   return xLinearScale(data.healthcare)})
+  .attr("y", function(data){
+    return yLinearScale(data.poverty)})
   .attr("fill", "white")
   .attr("dy", ".35em")
   .attr("text-anchor", "middle")
-  .text(d => `${d.abbr}`);
+  .text(function(data){ return data.abbr});
 
   // Step 6: Initialize tool tip
   // ==============================
   var toolTip = d3.tip()
     .attr("class", "tooltip")
     .offset([80, -60])
-    .html(d =>
-      `${d.abbr}<br>Poverty (%): ${d.poverty}<br>Lacks Healthcare (%): ${d.healthcare}`
-    );
+    .html(function(data){
+      return (`${data.abbr}<br>Poverty (%): ${data.poverty}<br>Lacks Healthcare (%): ${data.healthcare}`
+    )});
 
   // Step 7: Create tooltip in the chart
   // ==============================
@@ -94,11 +102,19 @@ d3.csv("data/data.csv", function (err, cData) {
   // Step 8: Create event listeners to display and hide the tooltip
   // ==============================
   circlesGroup.on("mouseover", function (data) {
-      toolTip.show(data);
+      return toolTip.show(data);
     })
     // onmouseout event
     .on("mouseout", function (data, index) {
-      toolTip.hide(data);
+      return toolTip.hide(data);
+    });
+
+  textGroup.on("mouseover", function (data) {
+    return toolTip.show(data);
+    })
+    // onmouseout event
+    .on("mouseout", function (data, index) {
+      return toolTip.hide(data);
     });
 
   // Create axes labels
